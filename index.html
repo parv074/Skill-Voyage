@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Skill Voyage — Grand Line Academy</title>
+  <meta name="description" content="Peer skill marketplace for university students. Trade knowledge, earn Berries, and level up your academic voyage."/>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link href="styles.css" rel="stylesheet"/>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md">
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-40 opacity-0 pointer-events-none lg:hidden" onclick="toggleSidebar(false)"></div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-[0_12px_28px_rgba(0,0,0,0.85)] z-50 flex flex-col justify-between overflow-y-auto lg:translate-x-0">
+    <div class="flex flex-col">
+      <!-- Brand -->
+      <div class="px-space-md py-space-md bg-surface-container-low">
+        <div class="flex items-center gap-space-sm">
+          <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-primary-container text-[20px]">sailing</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-headline-sm text-headline-sm text-primary leading-none">SKILL VOYAGE</span>
+            <span class="font-label-sm text-label-sm text-outline tracking-wider">GRAND LINE ACADEMY</span>
+          </div>
+          <img alt="Going Merry ship" class="ml-auto h-11 w-14 object-contain opacity-90" src="assets/going-merry.png"/>
+        </div>
+        <div class="mt-space-sm px-space-sm py-space-xs bg-surface-container rounded-lg flex items-center justify-between">
+          <div class="flex items-center gap-space-xs">
+            <span class="material-symbols-outlined text-tertiary text-[16px]">explore</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">LOG POSE</span>
+          </div>
+          <span class="font-label-sm text-label-sm text-primary">14°N 78°W • Tier IV</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav id="main-nav" class="px-space-sm py-space-md flex flex-col gap-space-xs">
+        <a class="nav-link flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all duration-200 cursor-pointer" data-page="your-ship" data-file="stitch-screens/html/1_home_dashboard.html" id="nav-your-ship">
+          <span class="material-symbols-outlined text-[20px]">sailing</span>
+          <span class="font-title-sm text-title-sm">Your Ship</span>
+        </a>
+        <a class="nav-link flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all duration-200 cursor-pointer" data-page="explore-islands" data-file="stitch-screens/html/4_explore_islands.html" id="nav-explore-islands">
+          <span class="material-symbols-outlined text-[20px]">map</span>
+          <span class="font-title-sm text-title-sm">Explore Islands</span>
+        </a>
+        <a class="nav-link flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all duration-200 cursor-pointer" data-page="marketplace" data-file="stitch-screens/html/5_grand_line_marketplace.html" id="nav-marketplace">
+          <span class="material-symbols-outlined text-[20px]">storefront</span>
+          <span class="font-title-sm text-title-sm">Marketplace</span>
+        </a>
+        <a class="nav-link flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all duration-200 cursor-pointer" data-page="quest-board" data-file="stitch-screens/html/2_quest_board.html" id="nav-quest-board">
+          <span class="material-symbols-outlined text-[20px]">assignment</span>
+          <span class="font-title-sm text-title-sm">Quest Board</span>
+        </a>
+        <a class="nav-link flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-all duration-200 cursor-pointer" data-page="berry-treasury" data-file="stitch-screens/html/3_berry_treasury.html" id="nav-berry-treasury">
+          <span class="material-symbols-outlined text-[20px]">toll</span>
+          <span class="font-title-sm text-title-sm">Berry Treasury</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Card -->
+    <button class="w-[calc(100%-1rem)] text-left p-space-md m-space-sm bg-surface-container-low rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.5)] hover:bg-surface-container transition-colors" onclick="openAccountPanel()" aria-label="Open Captain Parv account and rank">
+      <div class="flex items-center gap-space-sm">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-primary-container text-[22px]">anchor</span>
+        </div>
+        <div class="flex flex-col">
+          <span data-captain-name class="font-title-sm text-title-sm text-on-surface">Captain Parv</span>
+          <span class="font-label-sm text-label-sm text-primary" id="sidebar-balance">Rank 4 • <span id="berry-display">2,450</span> ฿</span>
+          <span class="font-body-sm text-body-sm text-outline">Chandigarh Univ</span>
+        </div>
+      </div>
+    </button>
+  </aside>
+
+  <!-- ===== MAIN WRAPPER ===== -->
+  <div class="lg:pl-72 min-h-screen flex flex-col">
+    <!-- Top Header -->
+    <header class="fixed top-0 lg:left-72 left-0 right-0 h-14 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)] z-30 flex items-center justify-between px-space-md lg:px-gutter">
+      <div class="flex items-center gap-space-md">
+        <!-- Mobile hamburger -->
+        <button class="lg:hidden flex items-center justify-center p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" onclick="toggleSidebar(true)" aria-label="Open menu" id="hamburger-btn">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+        <div class="flex items-center gap-space-xs">
+          <span class="material-symbols-outlined text-primary text-[18px]">directions_boat</span>
+          <span class="font-body-sm text-body-sm text-on-surface hidden sm:inline">Going Merry</span>
+          <span class="font-body-sm text-body-sm text-outline hidden md:inline" data-active-island>Water 7 • Programming &amp; Tech</span>
+        </div>
+        <div class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high">
+          <span class="material-symbols-outlined text-primary text-[16px]">payments</span>
+          <span class="font-title-sm text-title-sm text-primary" id="header-balance">2,450 ฿</span>
+          <span class="font-body-sm text-body-sm text-outline">(420 ฿ Escrow)</span>
+        </div>
+        <div class="hidden 2xl:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-secondary-container text-on-secondary-container">
+          <span class="material-symbols-outlined text-[16px]">bolt</span>
+          <span class="font-label-sm text-label-sm">Exam Surge +180%</span>
+        </div>
+      </div>
+        <div class="flex items-center gap-space-sm">
+        <button class="hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg text-primary hover:bg-surface-container transition-colors font-title-sm text-title-sm" onclick="toggleWelcomeGuide()" aria-label="How to use Skill Voyage">
+          <span class="material-symbols-outlined text-[18px]">help</span> Start here
+        </button>
+        <div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container">
+          <span class="material-symbols-outlined text-tertiary text-[16px]">schedule</span>
+          <span class="font-body-sm text-body-sm text-on-surface-variant">Maya Chen • Tomorrow 4:00 PM</span>
+        </div>
+        <button class="flex items-center justify-center p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="notif-btn" onclick="toggleNotifications()" aria-label="Open notifications">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute -mt-4 ml-3 w-2 h-2 rounded-full bg-secondary"></span>
+        </button>
+        <button class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer" onclick="openAccountPanel()" aria-label="Open account and rank">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content Area -->
+    <main class="w-full pt-14 bg-surface flex-1">
+      <!-- Loading Skeleton (shown during fetch) -->
+      <div id="page-skeleton" class="px-gutter py-space-lg space-y-space-md hidden">
+        <div class="skeleton-pulse h-10 w-64 rounded-lg"></div>
+        <div class="skeleton-pulse h-4 w-96 rounded"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md mt-space-lg">
+          <div class="skeleton-pulse h-32 rounded-xl"></div>
+          <div class="skeleton-pulse h-32 rounded-xl"></div>
+          <div class="skeleton-pulse h-32 rounded-xl"></div>
+          <div class="skeleton-pulse h-32 rounded-xl"></div>
+        </div>
+        <div class="skeleton-pulse h-64 rounded-xl mt-space-md"></div>
+      </div>
+
+      <!-- Dynamic Content Container -->
+      <div id="page-content" class="px-gutter"></div>
+    </main>
+  </div>
+
+  <!-- Simple orientation guide for first-time captains; it does not change page content. -->
+  <section id="welcome-guide" class="fixed right-4 bottom-5 z-[70] w-[min(360px,calc(100%-2rem))] rounded-xl border border-primary/30 bg-surface-container-high p-4 shadow-2xl">
+    <button class="absolute right-2 top-2 text-outline hover:text-on-surface" onclick="dismissWelcomeGuide()" aria-label="Close getting started guide"><span class="material-symbols-outlined text-[18px]">close</span></button>
+    <div class="pr-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">waving_hand</span><h2 class="font-headline-sm text-primary">NEW TO SKILL VOYAGE?</h2></div>
+    <p class="mt-2 text-body-sm text-on-surface-variant">Pick one simple place to begin—everything else can wait.</p>
+    <ol class="mt-3 space-y-2 text-body-sm text-on-surface">
+      <li><span class="text-primary font-bold">1.</span> Open <strong>Your Ship</strong> to see your progress.</li>
+      <li><span class="text-primary font-bold">2.</span> Visit <strong>Quest Board</strong> to find or post help.</li>
+      <li><span class="text-primary font-bold">3.</span> Use <strong>Marketplace</strong> when you want to learn a skill.</li>
+    </ol>
+  </section>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-space-lg py-space-sm rounded-xl bg-surface-container-high shadow-2xl border border-outline-variant/30 flex items-center gap-space-sm">
+    <span class="material-symbols-outlined text-primary text-[20px]">info</span>
+    <span id="toast-message" class="font-title-sm text-title-sm text-on-surface"></span>
+  </div>
+  <aside id="notification-panel" aria-live="polite"></aside>
+
+    <script src="app.js"></script>
+</body>
+</html>
